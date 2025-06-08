@@ -67,7 +67,7 @@ const ChatAI = () => {
   return (
     <div className="bg-[#303030] bg-center flex justify-center pt-32">
       <Head>
-        <title>JawirAI</title>
+        <title>BanjirAI</title>
       </Head>
       <div className="w-full sm:w-[720px]">
         <div className="flex flex-col min-h-screen">
