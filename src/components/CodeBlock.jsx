@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 const dracula = require("react-syntax-highlighter/dist/cjs/styles/prism/dracula").default;
 
+
 const CodeBlock = ({ content, className = "" }) => {
   const [copiedIndex, setCopiedIndex] = useState(null);
   const [expandedBlocks, setExpandedBlocks] = useState({});
