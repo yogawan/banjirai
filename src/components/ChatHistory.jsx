@@ -4,7 +4,8 @@ import { Icon } from "@iconify/react";
 
 const ChatHistory = memo(({ chatHistory, isLoading, handleClearHistory }) => {
   return (
-    <div className="flex flex-col min-h-full pb-16 md:pb-20">
+    <div className="flex flex-col min-h-full pb-44 md:pb-48">
+
       {/* Empty State */}
       {chatHistory.length === 0 ? (
         <div className="flex-1 flex items-center justify-center">

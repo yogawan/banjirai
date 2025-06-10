@@ -2,13 +2,17 @@ import { useState, useEffect } from "react";
 
 const ChatHeader = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const [currentTime, setCurrentTime] = useState(new Date());
+  const [currentTime, setCurrentTime] = useState(null);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true); // hanya aktif di sisi client
     setIsVisible(true);
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
+
+    const updateTime = () => setCurrentTime(new Date());
+    updateTime(); // set waktu pertama kali
+    const timer = setInterval(updateTime, 1000);
+
     return () => clearInterval(timer);
   }, []);
 
@@ -44,10 +48,8 @@ const ChatHeader = () => {
       <div className="relative z-10">
         {/* Logo area */}
         <div className="flex items-center gap-4 mb-6">
-          {/* Custom AI Logo */}
           <div className="relative">
             <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/20">
-              {/* AI Icon */}
               <svg className="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none">
                 <path d="M12 2L2 7V17L12 22L22 17V7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
                 <path d="M12 22V12" stroke="currentColor" strokeWidth="2"/>
@@ -55,7 +57,6 @@ const ChatHeader = () => {
                 <circle cx="12" cy="12" r="2" fill="currentColor"/>
               </svg>
             </div>
-            {/* Pulse effect */}
             <div className="absolute inset-0 w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl animate-ping opacity-20" />
           </div>
 
@@ -65,21 +66,25 @@ const ChatHeader = () => {
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
               <span className="text-xs text-white/60 font-medium">Online</span>
             </div>
-            <div className="text-xs text-white/40">
-              {formatTime(currentTime)}
-            </div>
+            {isClient && currentTime && (
+              <div className="text-xs text-white/40">
+                {formatTime(currentTime)}
+              </div>
+            )}
           </div>
         </div>
 
         {/* Greeting and title */}
-        <div className="mb-4">
-          <div className="text-sm text-white/50 font-medium mb-2 animate-fade-in" style={{ animationDelay: '0.2s' }}>
-            {getGreeting()}! 👋
+        {isClient && (
+          <div className="mb-4">
+            <div className="text-sm text-white/50 font-medium mb-2 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+              {getGreeting()}! 👋
+            </div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent animate-fade-in" style={{ animationDelay: '0.4s' }}>
+              Tanya AI
+            </h1>
           </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent animate-fade-in" style={{ animationDelay: '0.4s' }}>
-            Tanya AI
-          </h1>
-        </div>
+        )}
 
         {/* Description */}
         <div className="space-y-2 animate-fade-in" style={{ animationDelay: '0.6s' }}>
@@ -93,18 +98,10 @@ const ChatHeader = () => {
 
         {/* Feature badges */}
         <div className="flex flex-wrap gap-2 mt-6 animate-fade-in" style={{ animationDelay: '0.8s' }}>
-          <span className="px-3 py-1 bg-blue-500/20 text-blue-300 text-xs font-medium rounded-full border border-blue-500/30">
-            💧 Info Banjir
-          </span>
-          <span className="px-3 py-1 bg-green-500/20 text-green-300 text-xs font-medium rounded-full border border-green-500/30">
-            🚨 Peringatan Dini
-          </span>
-          <span className="px-3 py-1 bg-purple-500/20 text-purple-300 text-xs font-medium rounded-full border border-purple-500/30">
-            🛡️ Tips Keselamatan
-          </span>
-          <span className="px-3 py-1 bg-orange-500/20 text-orange-300 text-xs font-medium rounded-full border border-orange-500/30">
-            📍 Lokasi Aman
-          </span>
+          <span className="px-3 py-1 bg-blue-500/20 text-blue-300 text-xs font-medium rounded-full border border-blue-500/30">💧 Info Banjir</span>
+          <span className="px-3 py-1 bg-green-500/20 text-green-300 text-xs font-medium rounded-full border border-green-500/30">🚨 Peringatan Dini</span>
+          <span className="px-3 py-1 bg-purple-500/20 text-purple-300 text-xs font-medium rounded-full border border-purple-500/30">🛡️ Tips Keselamatan</span>
+          <span className="px-3 py-1 bg-orange-500/20 text-orange-300 text-xs font-medium rounded-full border border-orange-500/30">📍 Lokasi Aman</span>
         </div>
 
         {/* Quick actions */}
@@ -136,7 +133,7 @@ const ChatHeader = () => {
             transform: translateY(0);
           }
         }
-        
+
         .animate-fade-in {
           animation: fade-in 0.6s ease-out forwards;
           opacity: 0;
