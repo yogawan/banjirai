@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from "react";
 
 const ChatFloating = ({ input, setInput, handleSend, isLoading }) => {
   const [isFocused, setIsFocused] = useState(false);
@@ -6,7 +6,7 @@ const ChatFloating = ({ input, setInput, handleSend, isLoading }) => {
   const textareaRef = useRef(null);
 
   const handleKeyDown = (event) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
+    if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
       if (!isLoading && input && input.trim()) handleSend();
     }
@@ -15,7 +15,7 @@ const ChatFloating = ({ input, setInput, handleSend, isLoading }) => {
   const adjustTextareaHeight = () => {
     const textarea = textareaRef.current;
     if (textarea) {
-      textarea.style.height = 'auto';
+      textarea.style.height = "auto";
       const scrollHeight = textarea.scrollHeight;
       textarea.style.height = `${Math.min(scrollHeight, 120)}px`;
     }
@@ -33,10 +33,11 @@ const ChatFloating = ({ input, setInput, handleSend, isLoading }) => {
 
   return (
     <div className="z-50 m-4 fixed bottom-0 left-0 right-0 lg:ml-[380px] lg:mr-[380px]">
-      <div
+      <div 
         className={`
           relative bg-gradient-to-r from-slate-900/90 to-slate-800/90 
-  backdrop-blur-sm border border-white/20 rounded-2xl shadow-md transition-all duration-300 ease-outt
+          backdrop-blur-xl border border-white/20 rounded-2xl 
+          shadow-2xl shadow-black/50 transition-all duration-300 ease-out
           ${isFocused ? 'ring-2 ring-blue-500/50 border-blue-500/30 shadow-blue-500/20' : ''}
           ${isHovered ? 'border-white/30 shadow-3xl' : ''}
         `}
@@ -45,7 +46,7 @@ const ChatFloating = ({ input, setInput, handleSend, isLoading }) => {
       >
         {/* Gradient overlay for modern effect */}
         <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-
+        
         <div className="relative flex items-end gap-3 p-4">
           {/* Input area */}
           <div className="flex-1 relative">
@@ -68,9 +69,13 @@ const ChatFloating = ({ input, setInput, handleSend, isLoading }) => {
               rows={1}
               style={{ lineHeight: '1.5' }}
             />
-
+            
             {/* Character counter for long messages */}
-            {input && input.length > 200 && <div className="absolute bottom-1 right-2 text-xs text-white/30">{input.length}/1000</div>}
+            {input && input.length > 200 && (
+              <div className="absolute bottom-1 right-2 text-xs text-white/30">
+                {input.length}/1000
+              </div>
+            )}
           </div>
 
           {/* Send button */}
@@ -79,15 +84,20 @@ const ChatFloating = ({ input, setInput, handleSend, isLoading }) => {
             className={`
               relative flex items-center justify-center w-12 h-12 
               rounded-xl transition-all duration-200 ease-out transform
-              ${canSend ? 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg shadow-blue-500/30 hover:scale-105 active:scale-95' : 'bg-white/10 text-white/30 cursor-not-allowed'}
+              ${canSend 
+                ? 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg shadow-blue-500/30 hover:scale-105 active:scale-95' 
+                : 'bg-white/10 text-white/30 cursor-not-allowed'
+              }
               ${isLoading ? 'animate-pulse' : ''}
             `}
             disabled={!canSend}
           >
             {/* Button background glow effect */}
-            {canSend && <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-blue-600 rounded-xl blur opacity-20 animate-pulse" />}
-
-            {isLoading ? (
+            {canSend && (
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-blue-600 rounded-xl blur opacity-20 animate-pulse" />
+            )}
+            
+{isLoading ? (
               <svg className="w-5 h-5 animate-spin relative z-10" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
@@ -115,14 +125,12 @@ const ChatFloating = ({ input, setInput, handleSend, isLoading }) => {
         )}
 
         {/* Bottom accent line */}
-        <div
-          className={`
+        <div className={`
           absolute bottom-0 left-1/2 transform -translate-x-1/2 h-0.5 rounded-full
           bg-gradient-to-r from-transparent via-blue-500 to-transparent
           transition-all duration-300 ease-out
           ${isFocused ? 'w-full opacity-100' : 'w-0 opacity-0'}
-        `}
-        />
+        `} />
       </div>
 
       {/* Keyboard shortcut hint */}
