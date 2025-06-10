@@ -1,13 +1,20 @@
-import { useState, useRef, useEffect } from "react";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-const dracula = require("react-syntax-highlighter/dist/cjs/styles/prism/dracula").default;
+import { useState, useMemo } from "react";
+import dynamic from "next/dynamic";
 
+const SyntaxHighlighter = dynamic(
+  () => import("react-syntax-highlighter").then(mod => mod.Prism),
+  { ssr: false }
+);
+const dracula = require("react-syntax-highlighter/dist/cjs/styles/prism/dracula").default;
 
 const CodeBlock = ({ content, className = "" }) => {
   const [copiedIndex, setCopiedIndex] = useState(null);
   const [expandedBlocks, setExpandedBlocks] = useState({});
   const [lineNumbers, setLineNumbers] = useState({});
-  const parts = content.split(/(```[\s\S]*?```)/g);
+
+  const parts = useMemo(() => {
+    return content.split(/(```[\s\S]*?```)/g);
+  }, [content]);
 
   const handleCopyCode = async (code, index) => {
     try {
@@ -15,22 +22,16 @@ const CodeBlock = ({ content, className = "" }) => {
       setCopiedIndex(index);
       setTimeout(() => setCopiedIndex(null), 2000);
     } catch (err) {
-      console.error('Failed to copy code:', err);
+      console.error("Failed to copy code:", err);
     }
   };
 
   const toggleExpanded = (index) => {
-    setExpandedBlocks(prev => ({
-      ...prev,
-      [index]: !prev[index]
-    }));
+    setExpandedBlocks(prev => ({ ...prev, [index]: !prev[index] }));
   };
 
   const toggleLineNumbers = (index) => {
-    setLineNumbers(prev => ({
-      ...prev,
-      [index]: !prev[index]
-    }));
+    setLineNumbers(prev => ({ ...prev, [index]: !prev[index] }));
   };
 
   const getLanguageIcon = (language) => {
@@ -89,22 +90,19 @@ const CodeBlock = ({ content, className = "" }) => {
     <div className={`w-full max-w-4xl mx-auto ${className}`}>
       {parts.map((part, index) => {
         if (part.startsWith("```")) {
-          const languageMatch = part.match(/```(\w+)?/);
-          const language = languageMatch ? languageMatch[1] || "plaintext" : "plaintext";
+          const langMatch = part.match(/```(\w+)?/);
+          const language = langMatch?.[1] || "plaintext";
           const code = part.replace(/```[a-z]*\n?/i, "").replace(/```$/, "");
-          const codeLines = code.split('\n');
+          const codeLines = code.split("\n");
           const isExpanded = expandedBlocks[index];
           const showLineNumbers = lineNumbers[index];
           const shouldTruncate = codeLines.length > 20;
-          const displayCode = shouldTruncate && !isExpanded 
-            ? codeLines.slice(0, 15).join('\n') + '\n...'
+          const displayCode = shouldTruncate && !isExpanded
+            ? codeLines.slice(0, 15).join("\n") + "\n..."
             : code;
 
           return (
-            <div
-              key={index}
-              className="relative group border border-white/10 rounded-2xl mb-6 overflow-hidden bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-sm hover:border-white/20 transition-all duration-300"
-            >
+            <div key={index} className="relative mb-6 border border-white/10 rounded-xl overflow-hidden bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-sm hover:border-white/20 transition-all duration-300">
               {/* Header */}
               <div className="flex items-center justify-between px-4 py-3 bg-black/30 border-b border-white/10">
                 <div className="flex items-center gap-3">
@@ -225,15 +223,10 @@ const FormattedText = ({ text }) => {
   };
 
   const formatText = (text) => {
-    // Bold text
     text = text.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-white">$1</strong>');
-    // Italic text
     text = text.replace(/\*(.*?)\*/g, '<em class="italic text-white/90">$1</em>');
-    // Inline code
     text = text.replace(/`([^`]+)`/g, '<code class="px-2 py-1 bg-gray-800 text-blue-300 rounded font-mono text-sm">$1</code>');
-    // Links
     text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline hover:no-underline transition-colors duration-200">$1 ↗</a>');
-    
     return text;
   };
 
@@ -242,7 +235,6 @@ const FormattedText = ({ text }) => {
       {text.split("\n").map((line, index) => {
         const formattedLine = formatText(line);
 
-        // Handle different list types
         if (/^\s*[-*+]\s/.test(line)) {
           const listContent = line.replace(/^\s*[-*+]\s/, '');
           return (
@@ -256,7 +248,6 @@ const FormattedText = ({ text }) => {
           );
         }
 
-        // Handle numbered lists
         if (/^\s*\d+\.\s/.test(line)) {
           const match = line.match(/^\s*(\d+)\.\s(.+)/);
           if (match) {
@@ -275,7 +266,6 @@ const FormattedText = ({ text }) => {
           }
         }
 
-        // Handle headers
         if (/^#{1,6}\s/.test(line)) {
           const level = line.match(/^(#{1,6})\s/)[1].length;
           const content = line.replace(/^#{1,6}\s/, '');
@@ -297,7 +287,6 @@ const FormattedText = ({ text }) => {
           );
         }
 
-        // Handle blockquotes
         if (/^\s*>\s/.test(line)) {
           const content = line.replace(/^\s*>\s/, '');
           return (
@@ -310,7 +299,6 @@ const FormattedText = ({ text }) => {
           );
         }
 
-        // Regular paragraphs
         if (line.trim()) {
           return (
             <p 
@@ -321,7 +309,6 @@ const FormattedText = ({ text }) => {
           );
         }
 
-        // Empty lines
         return <div key={index} className="h-2"></div>;
       })}
     </div>
