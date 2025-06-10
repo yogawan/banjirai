@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from 'react';
 
 const ChatForm = ({ input, setInput, handleSend, isLoading }) => {
   const [isFocused, setIsFocused] = useState(false);
@@ -6,7 +6,7 @@ const ChatForm = ({ input, setInput, handleSend, isLoading }) => {
   const textareaRef = useRef(null);
 
   const handleKeyDown = (event) => {
-    if (event.key === "Enter" && !event.shiftKey) {
+    if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
       if (!isLoading && input && input.trim()) handleSend();
     }
@@ -15,7 +15,7 @@ const ChatForm = ({ input, setInput, handleSend, isLoading }) => {
   const adjustTextareaHeight = () => {
     const textarea = textareaRef.current;
     if (textarea) {
-      textarea.style.height = "auto";
+      textarea.style.height = 'auto';
       const scrollHeight = textarea.scrollHeight;
       // Min height 80px (h-20), max height 160px (h-40)
       textarea.style.height = `${Math.min(Math.max(scrollHeight, 80), 160)}px`;
@@ -31,10 +31,15 @@ const ChatForm = ({ input, setInput, handleSend, isLoading }) => {
   };
 
   const canSend = input && input.trim() && !isLoading;
-  const wordCount = input ? input.trim().split(/\s+/).filter(word => word.length > 0).length : 0;
+  const wordCount = input
+    ? input
+        .trim()
+        .split(/\s+/)
+        .filter((word) => word.length > 0).length
+    : 0;
 
   return (
-    <div 
+    <div
       className={`
         w-full relative bg-gradient-to-br from-slate-900/60 to-slate-800/60 
         backdrop-blur-xl border border-white/20 rounded-2xl 
@@ -47,33 +52,25 @@ const ChatForm = ({ input, setInput, handleSend, isLoading }) => {
     >
       {/* Gradient overlay for modern effect */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-2xl opacity-0 transition-opacity duration-300 hover:opacity-100" />
-      
+
       {/* Main content area */}
       <div className="relative">
         {/* Header with status indicator */}
         <div className="flex items-center justify-between px-5 pt-4 pb-2">
           <div className="flex items-center gap-2">
-            <div className={`w-2 h-2 rounded-full transition-colors duration-300 ${
-              isLoading ? 'bg-yellow-400 animate-pulse' : 'bg-green-400'
-            }`} />
-            <span className="text-xs text-white/40 font-medium">
-              {isLoading ? 'AI sedang memproses...' : 'Siap menerima pesan'}
-            </span>
+            <div className={`w-2 h-2 rounded-full transition-colors duration-300 ${isLoading ? 'bg-yellow-400 animate-pulse' : 'bg-green-400'}`} />
+            <span className="text-xs text-white/40 font-medium">{isLoading ? 'AI sedang memproses...' : 'Siap menerima pesan'}</span>
           </div>
-          
+
           {/* Word counter */}
-          {wordCount > 0 && (
-            <div className="text-xs text-white/30">
-              {wordCount} kata
-            </div>
-          )}
+          {wordCount > 0 && <div className="text-xs text-white/30">{wordCount} kata</div>}
         </div>
 
         {/* Input area */}
         <div className="px-5 pb-4">
           <textarea
             ref={textareaRef}
-            value={input || ""}
+            value={input || ''}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
             onFocus={() => setIsFocused(true)}
@@ -88,10 +85,10 @@ const ChatForm = ({ input, setInput, handleSend, isLoading }) => {
               ${isFocused ? 'placeholder-white/60 border-blue-500/30 bg-white/5' : ''}
             `}
             disabled={isLoading}
-            style={{ 
+            style={{
               lineHeight: '1.6',
               scrollbarWidth: 'thin',
-              scrollbarColor: 'rgba(255,255,255,0.2) transparent'
+              scrollbarColor: 'rgba(255,255,255,0.2) transparent',
             }}
           />
         </div>
@@ -116,19 +113,14 @@ const ChatForm = ({ input, setInput, handleSend, isLoading }) => {
             className={`
               relative flex items-center justify-center gap-2 px-6 py-3
               rounded-xl font-medium transition-all duration-200 ease-out transform
-              ${canSend 
-                ? 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg shadow-blue-500/30 hover:scale-105 active:scale-95' 
-                : 'bg-white/10 text-white/30 cursor-not-allowed'
-              }
+              ${canSend ? 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg shadow-blue-500/30 hover:scale-105 active:scale-95' : 'bg-white/10 text-white/30 cursor-not-allowed'}
               ${isLoading ? 'animate-pulse' : ''}
             `}
             disabled={!canSend}
           >
             {/* Button background glow effect */}
-            {canSend && (
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-blue-600 rounded-xl blur opacity-20" />
-            )}
-            
+            {canSend && <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-blue-600 rounded-xl blur opacity-20" />}
+
             {/* Button content */}
             <div className="relative z-10 flex items-center gap-2">
               {isLoading ? (
@@ -154,10 +146,11 @@ const ChatForm = ({ input, setInput, handleSend, isLoading }) => {
         {/* Progress indicator when loading */}
         {isLoading && (
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/10 rounded-b-2xl overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-blue-500 to-purple-500 animate-pulse" 
-                 style={{
-                   animation: 'loading-progress 2s ease-in-out infinite'
-                 }} 
+            <div
+              className="h-full bg-gradient-to-r from-blue-500 to-purple-500 animate-pulse"
+              style={{
+                animation: 'loading-progress 2s ease-in-out infinite',
+              }}
             />
           </div>
         )}
@@ -166,9 +159,15 @@ const ChatForm = ({ input, setInput, handleSend, isLoading }) => {
       {/* Custom styles for the loading animation */}
       <style jsx>{`
         @keyframes loading-progress {
-          0% { transform: translateX(-100%); }
-          50% { transform: translateX(0%); }
-          100% { transform: translateX(100%); }
+          0% {
+            transform: translateX(-100%);
+          }
+          50% {
+            transform: translateX(0%);
+          }
+          100% {
+            transform: translateX(100%);
+          }
         }
       `}</style>
     </div>
